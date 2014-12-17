@@ -1,3 +1,9 @@
+<script type="text/javascript">
+function disableCertificateSubmitButton() {
+    document.getElementById("create_certificates").disabled = 'true';
+}
+</script>
+
 <div class="wrap">
 <?php
 
@@ -17,11 +23,14 @@
 			$themexCourse = new ThemexCourse();
 
 			//could be this
-			$user = wp_get_current_user();
+			
 		    //$courses = ThemexCourse::getCourses(wp_get_current_user());
-		    $courses = ThemexCourse::getCourses($user);
+		    //$courses = ThemexCourse::getCourses($user);
 
 		    $accredible_certificates = new Accredible_Certificate();
+
+		    $user = wp_get_current_user();
+		    $courses = @Accredible_Certificate::get_courses($user);
 		    
 			//If there isn't any courses then tell the user
 			if(empty($courses)){
@@ -39,7 +48,7 @@
 			    	echo "<p>To automatically issue certificates upon course completition please amend your settings.</p>";
 			    }
 
-				echo '<form method="POST" action=' . admin_url( 'admin.php' ) . '>';
+				echo '<form method="POST" action="' . admin_url( 'admin.php' ) . '">';
 				echo '<input type="hidden" name="action" value="wpse10500" />';
 
 				//display each course info
@@ -101,15 +110,15 @@
 						    			}
 
 						    			if($no_cert){
-						    				echo '<input type="hidden" name="recipient_name[]" value="' . $user->display_name . '" />';
-							    			echo '<input type="hidden" name="recipient_email[]" value="' . $user->user_email . '" />';
-							    			echo '<input type="hidden" name="course_name[]" value="' . get_the_title($course_id) . '" />';
-							    			echo '<input type="hidden" name="course_link[]" value="' . get_permalink($course_id) . '" />';
-							    			echo '<input type="hidden" name="course_id[]" value="' . $course_id . '" />';
+						    				echo '<input type="hidden" name="recipient_name[]" value="' . esc_attr($user->display_name) . '" />';
+							    			echo '<input type="hidden" name="recipient_email[]" value="' . esc_attr($user->user_email) . '" />';
+							    			echo '<input type="hidden" name="course_name[]" value="' . esc_attr(get_the_title($course_id)) . '" />';
+							    			echo '<input type="hidden" name="course_link[]" value="' . esc_attr(get_permalink($course_id)) . '" />';
+							    			echo '<input type="hidden" name="course_id[]" value="' . esc_attr($course_id) . '" />';
 							    			global $post;
 										    $post = get_post($course_id);
 										    setup_postdata( $post, $more_link_text, $stripteaser );
-										    echo '<input type="hidden" name="course_description[]" value="' . get_the_excerpt() . '" />';
+										    echo '<input type="hidden" name="course_description[]" value="' . esc_attr(get_the_excerpt()) . '" />';
 										    wp_reset_postdata( $post );
 				    						echo '<input type="checkbox" name="issue_certificate[]">';
 						    			} else {
@@ -130,7 +139,7 @@
 
 			    }
 
-			    echo '<br><br><input type="submit" value="Create Certificates" class="button button-primary" />';
+			    echo '<br><br><input type="submit" value="Create Certificates" id="create_certificates" class="button button-primary" onclick="setTimeout(disableCertificateSubmitButton, 1);" />';
 				echo '</form>';
 			}
 
