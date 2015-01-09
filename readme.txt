@@ -64,7 +64,7 @@ If you're using Academy Theme and would like students to be able to access certi
 		<input type="hidden" name="action" class="action" value="<?php echo THEMEX_PREFIX; ?>update_course" />
 	</form>
 
-4. Click 'Update file'
+Then click 'Update file'
 
 Manually creating certificates:
 
